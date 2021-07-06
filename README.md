@@ -28,5 +28,5 @@ lxc launch nixos nixos-container -c security.nesting=true
 
 Access its root shell:
 ```
-lxc exec nixos-container -- /bin/bash
+lxc exec nixos-container bash
 ```
