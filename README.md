@@ -9,7 +9,7 @@ This flake provides a configuration to build a NixOS image for use with LXD.
 ## Prerequisites
 - Install [nixos-generators](https://github.com/nix-community/nixos-generators):
     ```
-    nix profile install github:nix-community/nixos-generators
+    nix shell github:nix-community/nixos-generators
     ```
 - Enable lxd by adding `virtualisation.lxd.enable = true;` to your NixOS configuration.
 
