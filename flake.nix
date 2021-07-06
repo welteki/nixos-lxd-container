@@ -9,7 +9,7 @@
       modules =[
         ({ pkgs, ... }: {
           imports = [
-            ./lxc-container.nix
+            ./lxc-template/lxc-container.nix
           ];
 
           # Install flakes
@@ -20,10 +20,10 @@
 
           # Copy the config for nixos-rebuild
           system.activationScripts.config = ''
-            if [ ! -e /etc/nixos/configuration.nix ]; then
+            if [ ! -e /etc/nixos/flake.nix ]; then
               mkdir -p /etc/nixos
-              cat ${./lxc-container.nix} > /etc/nixos/lxc-container.nix
-              cat ${./configuration.nix} > /etc/nixos/configuration.nix
+              cat ${./lxc-template/lxc-container.nix} > /etc/nixos/lxc-container.nix
+              cat ${./lxc-template/flake.nix} > /etc/nixos/flake.nix
             fi
           '';
           
@@ -39,5 +39,12 @@
         })
       ];
     };
+
+    templates.lxc-container = {
+      path = ./lxc-template;
+      description = "Minimal NixOS host configuration for lxd container.";
+    };
+
+    defaultTemplate = self.templates.lxc-container;
   };
 }
