@@ -1,5 +1,5 @@
 {
-  description = "A very basic flake";
+  description = "NixOS lxd container configuration";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-21.05";
 
