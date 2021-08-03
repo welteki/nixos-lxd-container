@@ -40,6 +40,8 @@
       ];
     };
 
+    nixosModules.lxc-container = import ./lxc-template/lxc-container.nix
+
     templates.lxc-container = {
       path = ./lxc-template;
       description = "Minimal NixOS host configuration for lxd container.";
