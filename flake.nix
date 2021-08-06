@@ -40,7 +40,7 @@
       ];
     };
 
-    nixosModules.lxc-container = import ./lxc-template/lxc-container.nix
+    nixosModules.lxc-container = import ./lxc-template/lxc-container.nix;
 
     templates.lxc-container = {
       path = ./lxc-template;
