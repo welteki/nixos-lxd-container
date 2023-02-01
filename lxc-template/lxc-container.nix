@@ -1,11 +1,11 @@
-{ lib, config, pkgs, modulesPath, ... }:
+{ lib, config, pkgs, ... }:
 
 with lib;
 
 {
-  imports = [
-    "${toString modulesPath}/profiles/docker-container.nix"
-  ];
+  # This is container
+  boot.isContainer = true;
+  boot.loader.initScript.enable = true;
 
   # Disable systemd-udev-trigger.service in lxc containers
   systemd.services.systemd-udev-trigger.enable = false;
@@ -18,20 +18,41 @@ with lib;
     ProtectKernelTunables=no
   '';
 
-  # Allow the user to login as root without password.
-  users.users.root.initialHashedPassword = mkOverride 150 "";
+  # Network
+  networking.useDHCP = false;
+  networking.interfaces.eth0.useDHCP = true;
 
-  system.activationScripts.installInitScript = mkForce ''
-    ln -fs $systemConfig/init /sbin/init
-  '';
+  # Support for flakes and deploy-rs
+  nix.settings = {
+    experimental-features = [ "nix-command" "flakes" ];   # support for flake config
+    trusted-users = [ "root" "admin" ];       # this users can build nixos, need for deploy-rs
+  };
 
-  # Some more help text.
-  services.getty.helpLine =
-    ''
-      Log in as "root" with an empty password.
-    '';
+  # /etc/passwd is imutable
+  users.mutableUsers = false;
+
+  users.users.admin = {
+    isNormalUser = true;
+    description = "Administrator";
+    extraGroups = [ "wheel" ];
+    uid = 1000;
+    password = "nixos";
+  };
+
+  # Passwordless sudo
+  security.sudo.wheelNeedsPassword = false;
 
   # Containers should be light-weight, so start sshd on demand.
-  services.openssh.enable = mkDefault true;
-  services.openssh.startWhenNeeded = mkDefault true;
+  services.openssh = {
+    enable = true;
+    ports = [ 22 ];
+    openFirewall = true;
+    permitRootLogin = "no";
+    passwordAuthentication = false;
+    startWhenNeeded  = true;
+  };
+
+  services.getty.autologinUser = lib.mkDefault "root";
+
+  system.stateVersion = "22.11";
 }
